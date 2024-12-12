@@ -9,11 +9,23 @@ import java.util.Date;
 
 public class HistoryPanel extends JPanel {
 
+    private final JPanel contentPanel;
+
     public HistoryPanel() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
         setBackground(new Color(240, 240, 240));
-        setPreferredSize(new Dimension(200, 0));
+        setPreferredSize(new Dimension(170, 0));
         setBorder(BorderFactory.createTitledBorder("Conversion History"));
+
+        contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(new Color(240, 240, 240));
+
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        add(scrollPane, BorderLayout.CENTER);
     }
 
     public void addHistoryCard(ExchangeCommand command) {
@@ -34,8 +46,8 @@ public class HistoryPanel extends JPanel {
         historyCard.add(cardLabel, BorderLayout.CENTER);
         historyCard.setPreferredSize(new Dimension(180, 80));
 
-        add(historyCard, 0);
-        revalidate();
-        repaint();
+        contentPanel.add(historyCard, 0);
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 }

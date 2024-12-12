@@ -46,6 +46,7 @@ public class ExchangeCommand implements Command {
     }
 
     public double getConvertedAmount() {
-        return convertedAmount;
+        return Math.round(convertedAmount * 100.0) / 100.0;
     }
+
 }
