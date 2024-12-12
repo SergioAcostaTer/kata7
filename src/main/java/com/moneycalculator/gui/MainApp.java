@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,38 +17,36 @@ public class MainApp {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Currency Converter");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(675, 350);
+            frame.setSize(700, 300);
             frame.setLayout(new BorderLayout());
 
-            // Dependencies
             CurrencyRateService rateService = new CurrencyRateFetcher();
             MoneyConverter converter = new MoneyConverter();
-            List<String[]> currencyDetails = loadCurrencyDetails("src/main/resources/currencies.tsv");
+            List<String[]> currencyDetails = loadCurrencies();
 
-            // Components
+            String[] currencyDisplayNames = currencyDetails.stream()
+                    .map(parts -> parts[1] + " (" + parts[0] + ")")
+                    .toArray(String[]::new);
+
             HistoryPanel historyPanel = new HistoryPanel();
-            InputPanel inputPanel = new InputPanel(rateService, converter, historyPanel, currencyDetails);
+            InputPanel inputPanel = new InputPanel(rateService, converter, currencyDisplayNames, historyPanel);
 
-            // Adding components to the frame
-            frame.add(historyPanel.getPanel(), BorderLayout.WEST);
-            frame.add(inputPanel.getPanel(), BorderLayout.CENTER);
+            frame.add(historyPanel, BorderLayout.WEST);
+            frame.add(inputPanel, BorderLayout.CENTER);
 
             frame.setVisible(true);
         });
     }
 
-    private static List<String[]> loadCurrencyDetails(String filePath) {
+    private static List<String[]> loadCurrencies() {
         List<String[]> currencyDetails = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/currencies.tsv"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\t");
-                if (parts.length >= 2) {
-                    currencyDetails.add(parts);
-                }
+                currencyDetails.add(line.split("\t"));
             }
-        } catch (IOException e) {
-            System.err.println("Failed to load currencies from file: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Failed to load currencies: " + e.getMessage());
         }
         return currencyDetails;
     }
