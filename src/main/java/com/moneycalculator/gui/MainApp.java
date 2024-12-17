@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,9 @@ public class MainApp {
 
     private static List<String[]> loadCurrencies() {
         List<String[]> currencyDetails = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/currencies.tsv"))) {
+        try (InputStream inputStream = MainApp.class.getClassLoader().getResourceAsStream("currencies.tsv");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
             String line;
             while ((line = reader.readLine()) != null) {
                 currencyDetails.add(line.split("\t"));
@@ -48,6 +52,7 @@ public class MainApp {
         } catch (Exception e) {
             System.err.println("Failed to load currencies: " + e.getMessage());
         }
+
         return currencyDetails;
     }
 }
